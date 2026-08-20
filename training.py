@@ -45,6 +45,7 @@ def train_model(dataset, epochs, fraction):
         name="chip-segment",
         amp=True,
         batch=-1,
+        patience=30,
     )
     return (model, results)
 
