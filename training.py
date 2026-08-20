@@ -36,7 +36,7 @@ def download_dataset():
 def train_model(dataset, epochs, fraction):
     """学習済み YOLO に追加学習を行い、結果を返す。"""
     model = YOLO(f"yolo{YOLO_VERSION}n-seg.pt")
-    results = model.train(
+    model.train(
         data=f"{dataset.location}/data.yaml",
         epochs=epochs,
         fraction=fraction,
@@ -47,7 +47,7 @@ def train_model(dataset, epochs, fraction):
         batch=-1,
         patience=30,
     )
-    return (model, results)
+    return model
 
 
 def detect(weights_path, image_dir):
@@ -74,26 +74,6 @@ def detect(weights_path, image_dir):
     return results
 
 
-def report_artifacts(save_dir):
-    """学習過程の各種プロットが保存されているか確認し、パスを案内する。"""
-    d = Path(save_dir)
-    want = [
-        "val_batch0_labels.jpg",  # 自分のアノテーション
-        "val_batch0_pred.jpg",  # 同じ画像への予測
-        "results.png",  # 学習曲線
-        "MaskPR_curve.png",  # P-R トレードオフ
-        "MaskF1_curve.png",  # conf 閾値の目安
-        "confusion_matrix_normalized.png",  # 混同行列
-        "labels.jpg",  # データ分布
-        "train_batch0.jpg",  # 拡張後の入力
-    ]
-    print("=" * 60)
-    print("学習過程の出力ファイル:")
-    for name in want:
-        p = d / name
-        print(f"  {'○' if p.exists() else '×(なし)'}  {name} -> {p}")
-
-
 def read_env():
     """環境変数から設定を読み込む。"""
     global ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_PROJECT
@@ -105,9 +85,8 @@ def read_env():
 def main():
     read_env()
     dataset = download_dataset()
-    model, results = train_model(dataset, epochs=EPOCHS, fraction=FRACTION)
+    model = train_model(dataset, epochs=EPOCHS, fraction=FRACTION)
     detect(model.trainer.best, TEST_IMAGE_DIR)
-    report_artifacts(results.save_dir)
 
 
 if __name__ == "__main__":
