@@ -7,7 +7,7 @@ from pathlib import Path
 TEST_IMAGE_DIR = "./data/pokerchips"
 DEVICE = "cuda"  # GPU が無い場合は "cpu"
 
-YOLO_VERSION = "26"
+YOLO_VERSION = "26" # 8は使えない. yolov8と書くが, yolo11, yolo26と書くため
 EPOCHS = 300
 FRACTION = 0.04
 
@@ -30,12 +30,12 @@ def download_dataset():
     rf = Roboflow(api_key=ROBOFLOW_API_KEY)
     project = rf.workspace(ROBOFLOW_WORKSPACE).project(ROBOFLOW_PROJECT)
     version = project.version(1)
-    return version.download(f"yolov{YOLO_VERSION}")
+    return version.download(f"yolo{YOLO_VERSION}")
 
 
 def train_model(dataset, epochs, fraction):
     """学習済み YOLO に追加学習を行い、結果を返す。"""
-    model = YOLO(f"yolov{YOLO_VERSION}-seg.pt")
+    model = YOLO(f"yolo{YOLO_VERSION}n-seg.pt")
     results = model.train(
         data=f"{dataset.location}/data.yaml",
         epochs=epochs,
