@@ -4,7 +4,6 @@ import os
 import glob
 from pathlib import Path
 
-TEST_IMAGE_DIR = "./data/pokerchips"
 DEVICE = "cuda"  # GPU が無い場合は "cpu"
 
 YOLO_VERSION = "26"  # 8は使えない. yolov8と書くが, yolo11, yolo26と書くため
@@ -25,8 +24,7 @@ def read_env():
     ROBOFLOW_PRETRAINED_PROJECT = os.environ["ROBOFLOW_PRETRAINED_PROJECT"]
     ROBOFLOW_TEST_PROJECT = os.environ["ROBOFLOW_TEST_PROJECT"]
 
-    global TEST_IMAGE_DIR, DEVICE, YOLO_VERSION, EPOCHS, FRACTION
-    TEST_IMAGE_DIR = os.environ.get("TEST_IMAGE_DIR", TEST_IMAGE_DIR)
+    global DEVICE, YOLO_VERSION, EPOCHS, FRACTION
     DEVICE = os.environ.get("DEVICE", DEVICE)
     YOLO_VERSION = os.environ.get("YOLO_VERSION", YOLO_VERSION)
     EPOCHS = int(os.environ.get("EPOCHS", EPOCHS))
@@ -67,37 +65,27 @@ def train_model(dataset, epochs, fraction):
     return model
 
 
-def detect(weights_path, image_dir):
-    """学習済みモデルでテスト画像を検出する。結果画像は save=True で自動保存。"""
-    images = collect_images(image_dir, extensions=("jpg", "jpeg", "png"))
-    if not images:
-        print("テスト画像が見つかりませんでした。")
-        return None
-
+def evaluate(weights_path, dataset):
+    """dataset の test セットを使って学習済みモデルを評価する。"""
     model = YOLO(weights_path)
-    results = model(
-        images,  # リストごと渡せる
-        save=True,
-        show_boxes=False,
-        show_labels=False,
-        show_conf=False,
-        line_width=2,
+    model.val(
+        data=f"{dataset.location}/data.yaml",
+        split="test",
+        imgsz=640,
+        device=DEVICE,
     )
-
-    save_dir = results[0].save_dir
-    print(f"検出結果の画像を保存しました: {save_dir}")
-    for f in collect_images(save_dir, extensions=("jpg", "jpeg", "png")):
-        print(" -", f)
-    return results
 
 
 def main():
     read_env()
-    dataset = download_dataset(
+    pretrained_dataset = download_dataset(
         ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_PRETRAINED_PROJECT
     )
-    model = train_model(dataset, epochs=EPOCHS, fraction=FRACTION)
-    detect(model.trainer.best, TEST_IMAGE_DIR)
+    model = train_model(pretrained_dataset, epochs=EPOCHS, fraction=FRACTION)
+    test_dataset = download_dataset(
+        ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_TEST_PROJECT
+    )
+    evaluate(model.trainer.best, test_dataset)
 
 
 if __name__ == "__main__":
