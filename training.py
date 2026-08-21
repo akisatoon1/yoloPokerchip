@@ -25,6 +25,13 @@ def read_env():
     ROBOFLOW_PRETRAINED_PROJECT = os.environ["ROBOFLOW_PRETRAINED_PROJECT"]
     ROBOFLOW_TEST_PROJECT = os.environ["ROBOFLOW_TEST_PROJECT"]
 
+    global TEST_IMAGE_DIR, DEVICE, YOLO_VERSION, EPOCHS, FRACTION
+    TEST_IMAGE_DIR = os.environ.get("TEST_IMAGE_DIR", TEST_IMAGE_DIR)
+    DEVICE = os.environ.get("DEVICE", DEVICE)
+    YOLO_VERSION = os.environ.get("YOLO_VERSION", YOLO_VERSION)
+    EPOCHS = int(os.environ.get("EPOCHS", EPOCHS))
+    FRACTION = float(os.environ.get("FRACTION", FRACTION))
+
 
 def collect_images(directory, extensions):
     """指定フォルダから対象拡張子の画像パスを集める（大文字小文字どちらも）。"""
