@@ -1,5 +1,2 @@
---extra-index-url https://download.pytorch.org/whl/cu128
 ultralytics
 roboflow
-torch==2.8.0
-torchvision==0.23.0
