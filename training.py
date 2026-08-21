@@ -76,7 +76,6 @@ def evaluate(weights_path, dataset):
         imgsz=640,
         device=DEVICE,
         name="test-chip-segment",
-        batch=-1,
     )
 
 
