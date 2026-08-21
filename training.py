@@ -8,6 +8,7 @@ DEVICE = "cuda"  # GPU が無い場合は "cpu"
 
 YOLO_VERSION = "26"  # 8は使えない. yolov8と書くが, yolo11, yolo26と書くため
 EPOCHS = 300
+PACIENCE = 30
 FRACTION = 0.04
 
 ROBOFLOW_API_KEY = None
@@ -24,10 +25,11 @@ def read_env():
     ROBOFLOW_PRETRAINED_PROJECT = os.environ["ROBOFLOW_PRETRAINED_PROJECT"]
     ROBOFLOW_TEST_PROJECT = os.environ["ROBOFLOW_TEST_PROJECT"]
 
-    global DEVICE, YOLO_VERSION, EPOCHS, FRACTION
+    global DEVICE, YOLO_VERSION, EPOCHS, PACIENCE, FRACTION
     DEVICE = os.environ.get("DEVICE", DEVICE)
     YOLO_VERSION = os.environ.get("YOLO_VERSION", YOLO_VERSION)
     EPOCHS = int(os.environ.get("EPOCHS", EPOCHS))
+    PACIENCE = int(os.environ.get("PACIENCE", PACIENCE))
     FRACTION = float(os.environ.get("FRACTION", FRACTION))
 
 
@@ -48,19 +50,19 @@ def download_dataset(api_key, workspace, project):
     return version.download(f"yolo{YOLO_VERSION}")
 
 
-def train_model(dataset, epochs, fraction):
+def train_model(dataset, epochs, patience, fraction):
     """学習済み YOLO に追加学習を行い、結果を返す。"""
     model = YOLO(f"yolo{YOLO_VERSION}n-seg.pt")
     model.train(
         data=f"{dataset.location}/data.yaml",
         epochs=epochs,
+        patience=patience,
         fraction=fraction,
         imgsz=640,
         device=DEVICE,
         name="chip-segment",
         amp=True,
         batch=-1,
-        patience=30,
     )
     return model
 
@@ -83,7 +85,9 @@ def main():
     pretrained_dataset = download_dataset(
         ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_PRETRAINED_PROJECT
     )
-    model = train_model(pretrained_dataset, epochs=EPOCHS, fraction=FRACTION)
+    model = train_model(
+        pretrained_dataset, epochs=EPOCHS, patience=PACIENCE, fraction=FRACTION
+    )
     test_dataset = download_dataset(
         ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_TEST_PROJECT
     )
