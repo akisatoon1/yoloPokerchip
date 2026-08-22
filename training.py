@@ -86,7 +86,7 @@ def evaluate(dataset, name, split="test", model=BEST_MODEL):
     save_counts_from_result(results, dataset, split=split)
 
 
-def show_predictions(source, name, model=BEST_MODEL):
+def show_predictions(source, name, model=BEST_MODEL, conf=0.25, iou=0.7):
     """学習済みモデルの推論を行い、結果を保存する。
 
     デフォルトの推論結果の画像がわかりづらいため。
@@ -98,12 +98,13 @@ def show_predictions(source, name, model=BEST_MODEL):
         name=name,
         save_txt=True,
         save_conf=True,
+        conf=conf,
+        iou=iou,
     )
     save_pred_imgs(results)
 
 
 def main():
-    read_env()
     pretrained_dataset = download_dataset(
         ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_PRETRAINED_PROJECT
     )
@@ -131,5 +132,6 @@ def main():
     )
 
 
+read_env()
 if __name__ == "__main__":
     main()
