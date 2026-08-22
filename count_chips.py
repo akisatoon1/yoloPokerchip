@@ -1,10 +1,12 @@
 import os
+import csv
+from pathlib import Path
 
 
 def count_lines_from_txt(path, conf_thres=None):
     """txt の有効行数を数える。conf_thres 指定時は末尾(信頼度)>=thres の行のみ。"""
     if not os.path.exists(path):
-        return 0
+        raise FileNotFoundError(f"{path} が見つかりません。")
     n = 0
     with open(path) as f:
         for line in f:
@@ -20,9 +22,37 @@ def count_lines_from_txt(path, conf_thres=None):
     return n
 
 
-if __name__ == "__main__":
-    print(
-        count_lines_from_txt(
-            "chip-count-my-env-1/test/labels/IMG_5552_jpg.rf.00a70b8ec97155031985af0447e98da4.txt"
+def save_csv_from_counts(counts_data, csv_path):
+    """counts_data を csv に保存する。"""
+    with open(csv_path, mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["label_filename", "correct_count", "pred_count"])
+        writer.writerows(counts_data)
+
+
+def get_counts_data_from_label(pred_label_dir, correct_label_dir):
+    """pred_label_dir と correct_label_dir の各 txt ファイルの行数を数えて返す。"""
+    counts_data = []
+    for correct_path in Path(correct_label_dir).glob("*.txt"):
+        filename = correct_path.name
+        pred_path = Path(pred_label_dir) / filename
+
+        correct_count = count_lines_from_txt(correct_path)
+        pred_count = (
+            count_lines_from_txt(pred_path, conf_thres=0.25)
+            if pred_path.exists()
+            else 0
         )
-    )
+
+        counts_data.append((filename, correct_count, pred_count))
+    return counts_data
+
+
+def save_counts_from_result(val_results, dataset):
+    pred_dir = Path(val_results.save_dir) / "labels"
+    correct_dir = Path(dataset.location) / "test" / "labels"
+
+    counts_data = get_counts_data_from_label(pred_dir, correct_dir)
+
+    csv_path = Path(val_results.save_dir) / "counts.csv"
+    save_csv_from_counts(counts_data, csv_path)

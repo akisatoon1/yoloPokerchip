@@ -3,6 +3,7 @@ from roboflow import Roboflow
 import os
 import glob
 from show_pred import save_pred_imgs
+from count_chips import save_counts_from_result
 
 DEVICE = "cuda"  # GPU が無い場合は "cpu"
 
@@ -60,7 +61,7 @@ def train_model(dataset, epochs, patience, fraction):
         fraction=fraction,
         imgsz=640,
         device=DEVICE,
-        name="chip-segment",
+        name="training-online-dataset",
         amp=True,
         batch=-1,
     )
@@ -71,20 +72,21 @@ def train_model(dataset, epochs, patience, fraction):
 BEST_MODEL = None
 
 
-def evaluate(dataset):
+def evaluate(dataset, name):
     """dataset の test セットを使って学習済みモデルを評価する。"""
-    BEST_MODEL.val(
+    results = BEST_MODEL.val(
         data=f"{dataset.location}/data.yaml",
         split="test",
         imgsz=640,
         device=DEVICE,
-        name="test-chip-segment",
+        name=name,
         save_txt=True,
         save_conf=True,
     )
+    save_counts_from_result(results, dataset)
 
 
-def show_val_predictions(trained_model, n=16):
+def show_val_predictions(trained_model, name, n=16):
     """valセットの最初のN枚を、bestモデルで推論して保存する。"""
     val_files = trained_model.trainer.test_loader.dataset.im_files
     images = val_files[:n]
@@ -93,14 +95,14 @@ def show_val_predictions(trained_model, n=16):
         source=images,
         imgsz=640,
         device=DEVICE,
-        name="val-pred-chip-segment",
+        name=name,
         save_txt=True,
         save_conf=True,
     )
     save_pred_imgs(results)
 
 
-def show_predictions(dataset):
+def show_predictions(dataset, name):
     """学習済みモデルの推論を行い、結果を保存する。
 
     デフォルトの推論結果の画像がわかりづらいため。
@@ -109,7 +111,7 @@ def show_predictions(dataset):
         source=f"{dataset.location}/test/images",
         imgsz=640,
         device=DEVICE,
-        name="pred-chip-segment",
+        name=name,
         save_txt=True,
         save_conf=True,
     )
@@ -131,9 +133,12 @@ def main():
     global BEST_MODEL
     BEST_MODEL = YOLO(model.trainer.best)
 
-    evaluate(test_dataset)
-    show_val_predictions(model, n=16)
-    show_predictions(test_dataset)
+    if DEVICE == "cuda":
+        # cpuのときはなぜかここでKilledされる
+        evaluate(pretrained_dataset, name="val-pretrained")
+    evaluate(test_dataset, name="val-mytask")
+    show_val_predictions(model, name="show-val-predictions", n=16)
+    show_predictions(test_dataset, name="show-mytask-predictions")
 
 
 if __name__ == "__main__":
