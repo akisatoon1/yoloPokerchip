@@ -82,16 +82,16 @@ def evaluate(dataset):
     )
 
 
-def show_train_predictions(trained_model, n=16):
-    """学習に使われた画像の最初のN枚を、指定した重みで推論して保存する。"""
-    train_files = trained_model.trainer.train_loader.dataset.im_files
-    images = train_files[:n]
+def show_val_predictions(trained_model, n=16):
+    """valセットの最初のN枚を、bestモデルで推論して保存する。"""
+    val_files = trained_model.trainer.test_loader.dataset.im_files
+    images = val_files[:n]
 
     results = BEST_MODEL.predict(
         source=images,
         imgsz=640,
         device=DEVICE,
-        name="train-pred-chip-segment",
+        name="val-pred-chip-segment",
         save_txt=True,
         save_conf=True,
     )
@@ -130,7 +130,7 @@ def main():
     BEST_MODEL = YOLO(model.trainer.best)
 
     evaluate(test_dataset)
-    show_train_predictions(model, n=16)
+    show_val_predictions(model, n=16)
     show_predictions(test_dataset)
 
 
