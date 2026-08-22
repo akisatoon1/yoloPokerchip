@@ -7,9 +7,9 @@ from pathlib import Path
 DEVICE = "cuda"  # GPU が無い場合は "cpu"
 
 YOLO_VERSION = "26"  # 8は使えない. yolov8と書くが, yolo11, yolo26と書くため
-EPOCHS = 300
+EPOCHS = 1
 PACIENCE = 30
-FRACTION = 0.04
+FRACTION = 0.01
 
 ROBOFLOW_API_KEY = None
 ROBOFLOW_WORKSPACE = None
