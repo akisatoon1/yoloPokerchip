@@ -86,13 +86,13 @@ def evaluate(dataset, name, split="test", model=BEST_MODEL):
     save_counts_from_result(results, dataset, split=split)
 
 
-def show_predictions(dataset, dir, name, model=BEST_MODEL):
+def show_predictions(source, name, model=BEST_MODEL):
     """学習済みモデルの推論を行い、結果を保存する。
 
     デフォルトの推論結果の画像がわかりづらいため。
     """
     results = model.predict(
-        source=os.path.join(dataset.location, dir, "images"),
+        source=source,
         imgsz=640,
         device=DEVICE,
         name=name,
@@ -121,8 +121,14 @@ def main():
         # cpuのときはなぜかここでKilledされる
         evaluate(pretrained_dataset, name="val-pretrained", split="val")
     evaluate(test_dataset, name="val-mytask")
-    show_predictions(pretrained_dataset, dir="valid", name="show-val-predictions")
-    show_predictions(test_dataset, dir="test", name="show-mytask-predictions")
+    show_predictions(
+        os.path.join(pretrained_dataset.location, "valid", "images"),
+        name="show-val-predictions",
+    )
+    show_predictions(
+        os.path.join(test_dataset.location, "test", "images"),
+        name="show-mytask-predictions",
+    )
 
 
 if __name__ == "__main__":
