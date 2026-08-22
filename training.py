@@ -72,9 +72,9 @@ def train_model(dataset, epochs, patience, fraction):
 BEST_MODEL = None
 
 
-def evaluate(dataset, name, split="test"):
+def evaluate(dataset, name, split="test", model=BEST_MODEL):
     """dataset の test(default) セットを使って学習済みモデルを評価する。"""
-    results = BEST_MODEL.val(
+    results = model.val(
         data=f"{dataset.location}/data.yaml",
         split=split,
         imgsz=640,
@@ -86,29 +86,13 @@ def evaluate(dataset, name, split="test"):
     save_counts_from_result(results, dataset, split=split)
 
 
-def show_val_predictions(trained_model, name, n=16):
-    """valセットの最初のN枚を、bestモデルで推論して保存する。"""
-    val_files = trained_model.trainer.test_loader.dataset.im_files
-    images = val_files[:n]
-
-    results = BEST_MODEL.predict(
-        source=images,
-        imgsz=640,
-        device=DEVICE,
-        name=name,
-        save_txt=True,
-        save_conf=True,
-    )
-    save_pred_imgs(results)
-
-
-def show_predictions(dataset, name):
+def show_predictions(dataset, dir, name, model=BEST_MODEL):
     """学習済みモデルの推論を行い、結果を保存する。
 
     デフォルトの推論結果の画像がわかりづらいため。
     """
-    results = BEST_MODEL.predict(
-        source=f"{dataset.location}/test/images",
+    results = model.predict(
+        source=os.path.join(dataset.location, dir, "images"),
         imgsz=640,
         device=DEVICE,
         name=name,
@@ -137,8 +121,8 @@ def main():
         # cpuのときはなぜかここでKilledされる
         evaluate(pretrained_dataset, name="val-pretrained", split="val")
     evaluate(test_dataset, name="val-mytask")
-    show_val_predictions(model, name="show-val-predictions", n=16)
-    show_predictions(test_dataset, name="show-mytask-predictions")
+    show_predictions(pretrained_dataset, dir="val", name="show-val-predictions")
+    show_predictions(test_dataset, dir="test", name="show-mytask-predictions")
 
 
 if __name__ == "__main__":
