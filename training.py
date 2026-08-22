@@ -72,18 +72,18 @@ def train_model(dataset, epochs, patience, fraction):
 BEST_MODEL = None
 
 
-def evaluate(dataset, name):
-    """dataset の test セットを使って学習済みモデルを評価する。"""
+def evaluate(dataset, name, split="test"):
+    """dataset の test(default) セットを使って学習済みモデルを評価する。"""
     results = BEST_MODEL.val(
         data=f"{dataset.location}/data.yaml",
-        split="test",
+        split=split,
         imgsz=640,
         device=DEVICE,
         name=name,
         save_txt=True,
         save_conf=True,
     )
-    save_counts_from_result(results, dataset)
+    save_counts_from_result(results, dataset, split=split)
 
 
 def show_val_predictions(trained_model, name, n=16):
@@ -135,7 +135,7 @@ def main():
 
     if DEVICE == "cuda":
         # cpuのときはなぜかここでKilledされる
-        evaluate(pretrained_dataset, name="val-pretrained")
+        evaluate(pretrained_dataset, name="val-pretrained", split="val")
     evaluate(test_dataset, name="val-mytask")
     show_val_predictions(model, name="show-val-predictions", n=16)
     show_predictions(test_dataset, name="show-mytask-predictions")

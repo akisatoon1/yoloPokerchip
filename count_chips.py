@@ -48,9 +48,11 @@ def get_counts_data_from_label(pred_label_dir, correct_label_dir):
     return counts_data
 
 
-def save_counts_from_result(val_results, dataset):
+def save_counts_from_result(val_results, dataset, split="test"):
+    split = "valid" if split == "val" else split
+
     pred_dir = Path(val_results.save_dir) / "labels"
-    correct_dir = Path(dataset.location) / "test" / "labels"
+    correct_dir = Path(dataset.location) / split / "labels"
 
     counts_data = get_counts_data_from_label(pred_dir, correct_dir)
 
