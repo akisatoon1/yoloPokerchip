@@ -67,10 +67,13 @@ def train_model(dataset, epochs, patience, fraction):
     return model
 
 
-def evaluate(weights_path, dataset):
+# 毎回bestを読み込むのは無駄なため
+BEST_MODEL = None
+
+
+def evaluate(dataset):
     """dataset の test セットを使って学習済みモデルを評価する。"""
-    model = YOLO(weights_path)
-    model.val(
+    BEST_MODEL.val(
         data=f"{dataset.location}/data.yaml",
         split="test",
         imgsz=640,
@@ -84,8 +87,7 @@ def show_train_predictions(trained_model, n=16):
     train_files = trained_model.trainer.train_loader.dataset.im_files
     images = train_files[:n]
 
-    model = YOLO(trained_model.trainer.best)
-    results = model.predict(
+    results = BEST_MODEL.predict(
         source=images,
         imgsz=640,
         device=DEVICE,
@@ -96,13 +98,12 @@ def show_train_predictions(trained_model, n=16):
     save_pred_imgs(results)
 
 
-def show_predictions(weights_path, dataset):
+def show_predictions(dataset):
     """学習済みモデルの推論を行い、結果を保存する。
 
     デフォルトの推論結果の画像がわかりづらいため。
     """
-    model = YOLO(weights_path)
-    results = model.predict(
+    results = BEST_MODEL.predict(
         source=f"{dataset.location}/test/images",
         imgsz=640,
         device=DEVICE,
@@ -124,9 +125,13 @@ def main():
     test_dataset = download_dataset(
         ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_TEST_PROJECT
     )
-    evaluate(model.trainer.best, test_dataset)
+
+    global BEST_MODEL
+    BEST_MODEL = YOLO(model.trainer.best)
+
+    evaluate(test_dataset)
     show_train_predictions(model, n=16)
-    show_predictions(model.trainer.best, test_dataset)
+    show_predictions(test_dataset)
 
 
 if __name__ == "__main__":
