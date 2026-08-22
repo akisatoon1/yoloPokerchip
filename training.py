@@ -121,7 +121,7 @@ def main():
         # cpuのときはなぜかここでKilledされる
         evaluate(pretrained_dataset, name="val-pretrained", split="val")
     evaluate(test_dataset, name="val-mytask")
-    show_predictions(pretrained_dataset, dir="val", name="show-val-predictions")
+    show_predictions(pretrained_dataset, dir="valid", name="show-val-predictions")
     show_predictions(test_dataset, dir="test", name="show-mytask-predictions")
 
 
