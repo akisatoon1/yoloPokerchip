@@ -79,6 +79,23 @@ def evaluate(weights_path, dataset):
     )
 
 
+def show_train_predictions(trained_model, n=16):
+    """学習に使われた画像の最初のN枚を、指定した重みで推論して保存する。"""
+    train_files = trained_model.trainer.train_loader.dataset.im_files
+    images = train_files[:n]
+
+    model = YOLO(trained_model.trainer.best)
+    results = model.predict(
+        source=images,
+        imgsz=640,
+        device=DEVICE,
+        name="train-pred-chip-segment",
+        save_txt=True,
+        save_conf=True,
+    )
+    save_pred_imgs(results)
+
+
 def show_predictions(weights_path, dataset):
     """学習済みモデルの推論を行い、結果を保存する。
 
@@ -108,6 +125,7 @@ def main():
         ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_TEST_PROJECT
     )
     evaluate(model.trainer.best, test_dataset)
+    show_train_predictions(model, n=16)
     show_predictions(model.trainer.best, test_dataset)
 
 
