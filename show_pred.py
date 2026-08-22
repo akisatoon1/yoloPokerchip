@@ -1,5 +1,5 @@
 import cv2
-from os import path
+from os import path, makedirs
 import logging
 
 logging.basicConfig(
@@ -15,7 +15,8 @@ def save_pred_imgs(results):
     """学習済みモデルの推論を行った画像のインスタンスセグメンテーションを可視化して保存する。"""
     for result in results:
         filename = path.basename(result.path)
-        saved_path = path.join(result.save_dir, filename)
+        saved_path = path.join(result.save_dir, "pred_imgs", filename)
+        makedirs(path.dirname(saved_path), exist_ok=True)
         try:
             save_pred_img(result, saved_path)
         except Exception as e:

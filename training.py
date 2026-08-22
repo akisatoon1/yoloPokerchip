@@ -80,7 +80,10 @@ def evaluate(weights_path, dataset):
 
 
 def show_predictions(weights_path, dataset):
-    """dataset の test セットを使って学習済みモデルの推論を行い、結果を保存する。"""
+    """学習済みモデルの推論を行い、結果を保存する。
+
+    デフォルトの推論結果の画像がわかりづらいため。
+    """
     model = YOLO(weights_path)
     results = model.predict(
         source=f"{dataset.location}/test/images",
