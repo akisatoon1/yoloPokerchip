@@ -2,7 +2,7 @@ from ultralytics import YOLO
 from roboflow import Roboflow
 import os
 import glob
-from pathlib import Path
+from show_pred import save_pred_imgs
 
 DEVICE = "cuda"  # GPU が無い場合は "cpu"
 
@@ -76,9 +76,21 @@ def evaluate(weights_path, dataset):
         imgsz=640,
         device=DEVICE,
         name="test-chip-segment",
+    )
+
+
+def show_predictions(weights_path, dataset):
+    """dataset の test セットを使って学習済みモデルの推論を行い、結果を保存する。"""
+    model = YOLO(weights_path)
+    results = model.predict(
+        source=f"{dataset.location}/test/images",
+        imgsz=640,
+        device=DEVICE,
+        name="pred-chip-segment",
         save_txt=True,
         save_conf=True,
     )
+    save_pred_imgs(results)
 
 
 def main():
@@ -93,6 +105,7 @@ def main():
         ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_TEST_PROJECT
     )
     evaluate(model.trainer.best, test_dataset)
+    show_predictions(model.trainer.best, test_dataset)
 
 
 if __name__ == "__main__":
