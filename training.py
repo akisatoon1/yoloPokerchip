@@ -83,7 +83,10 @@ def evaluate(dataset, name, split="test", model=BEST_MODEL):
         save_txt=True,
         save_conf=True,
     )
-    save_counts_from_result(results, dataset, split=split)
+
+    # 現状のデータセットでは, splitがvalのときデータはvalid/に保存されるため
+    split_dir = "valid" if split == "val" else split
+    save_counts_from_result(results, dataset, split_dir=split_dir)
 
 
 def show_predictions(source, name, model=BEST_MODEL, conf=0.25, iou=0.7):
