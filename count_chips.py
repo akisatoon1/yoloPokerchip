@@ -30,7 +30,7 @@ def save_csv_from_counts(counts_data, csv_path):
         writer.writerows(counts_data)
 
 
-def get_counts_data_from_label(pred_label_dir, correct_label_dir):
+def get_counts_data_from_label(pred_label_dir, correct_label_dir, conf_thres=0.25):
     """pred_label_dir と correct_label_dir の各 txt ファイルの行数を数えて返す。"""
     counts_data = []
     for correct_path in Path(correct_label_dir).glob("*.txt"):
@@ -39,7 +39,7 @@ def get_counts_data_from_label(pred_label_dir, correct_label_dir):
 
         correct_count = count_lines_from_txt(correct_path)
         pred_count = (
-            count_lines_from_txt(pred_path, conf_thres=0.25)
+            count_lines_from_txt(pred_path, conf_thres=conf_thres)
             if pred_path.exists()
             else 0
         )
