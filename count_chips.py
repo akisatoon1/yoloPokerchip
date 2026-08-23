@@ -24,6 +24,7 @@ def count_lines_from_txt(path, conf=None):
 
 def save_csv_from_counts(counts_data, csv_path):
     """counts_data を csv に保存する。"""
+    Path(csv_path).parent.mkdir(parents=True, exist_ok=True)
     with open(csv_path, mode="w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
         writer.writerow(["label_filename", "correct_count", "pred_count"])
