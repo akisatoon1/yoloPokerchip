@@ -3,7 +3,7 @@ import csv
 from pathlib import Path
 
 
-def count_lines_from_txt(path, conf_thres=None):
+def count_lines_from_txt(path, conf=None):
     """txt の有効行数を数える。conf_thres 指定時は末尾(信頼度)>=thres の行のみ。"""
     if not os.path.exists(path):
         raise FileNotFoundError(f"{path} が見つかりません。")
@@ -11,13 +11,13 @@ def count_lines_from_txt(path, conf_thres=None):
     with open(path) as f:
         for line in f:
             p = line.split()
-            if conf_thres is None:
+            if conf is None:
                 if (
                     len(p) >= 7
                 ):  # class + 最低3点(アノテーション)の最低7つ要素が必要だから
                     n += 1
             else:
-                if len(p) >= 8 and float(p[-1]) >= conf_thres:  # 予測: 信頼度で足切り
+                if len(p) >= 8 and float(p[-1]) >= conf:  # 予測: 信頼度で足切り
                     n += 1
     return n
 
@@ -30,7 +30,7 @@ def save_csv_from_counts(counts_data, csv_path):
         writer.writerows(counts_data)
 
 
-def get_counts_data_from_label(pred_label_dir, correct_label_dir, conf_thres=0.25):
+def get_counts_data_from_label(pred_label_dir, correct_label_dir, conf=0.25):
     """pred_label_dir と correct_label_dir の各 txt ファイルの行数を数えて返す。"""
     counts_data = []
     for correct_path in Path(correct_label_dir).glob("*.txt"):
@@ -39,9 +39,7 @@ def get_counts_data_from_label(pred_label_dir, correct_label_dir, conf_thres=0.2
 
         correct_count = count_lines_from_txt(correct_path)
         pred_count = (
-            count_lines_from_txt(pred_path, conf_thres=conf_thres)
-            if pred_path.exists()
-            else 0
+            count_lines_from_txt(pred_path, conf=conf) if pred_path.exists() else 0
         )
 
         counts_data.append((filename, correct_count, pred_count))
