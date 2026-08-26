@@ -11,7 +11,7 @@ YOLO_VERSION = "26"  # 8は使えない. yolov8と書くが, yolo11, yolo26と�
 EPOCHS = 1
 PACIENCE = 30
 FRACTION = 0.01
-LOCAL_DATA_ROOT = "dataset"
+DATASET_ROOT = "dataset"
 
 ROBOFLOW_API_KEY = None
 ROBOFLOW_WORKSPACE = None
@@ -27,12 +27,13 @@ def read_env():
     ROBOFLOW_PRETRAINED_PROJECT = os.environ["ROBOFLOW_PRETRAINED_PROJECT"]
     ROBOFLOW_TEST_PROJECT = os.environ["ROBOFLOW_TEST_PROJECT"]
 
-    global DEVICE, YOLO_VERSION, EPOCHS, PACIENCE, FRACTION
+    global DEVICE, YOLO_VERSION, EPOCHS, PACIENCE, FRACTION, DATASET_ROOT
     DEVICE = os.environ.get("DEVICE", DEVICE)
     YOLO_VERSION = os.environ.get("YOLO_VERSION", YOLO_VERSION)
     EPOCHS = int(os.environ.get("EPOCHS", EPOCHS))
     PACIENCE = int(os.environ.get("PACIENCE", PACIENCE))
     FRACTION = float(os.environ.get("FRACTION", FRACTION))
+    DATASET_ROOT = os.environ.get("DATASET_ROOT", DATASET_ROOT)
 
 
 def collect_images(directory, extensions):
@@ -49,7 +50,7 @@ def download_dataset(api_key, workspace, project_name):
     rf = Roboflow(api_key=api_key)
     project = rf.workspace(workspace).project(project_name)
     version = project.version(1)
-    location = os.path.join(LOCAL_DATA_ROOT, project_name)
+    location = os.path.join(DATASET_ROOT, project_name)
     return version.download(f"yolo{YOLO_VERSION}", location=location)
 
 
