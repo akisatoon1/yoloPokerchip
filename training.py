@@ -8,6 +8,7 @@ from count_chips import save_counts_from_result
 DEVICE = "cuda"  # GPU が無い場合は "cpu"
 
 YOLO_VERSION = "26"  # 8は使えない. yolov8と書くが, yolo11, yolo26と書くため
+MODEL_SIZE = "n"  # n, s, m, l, x
 EPOCHS = 1
 PACIENCE = 30
 FRACTION = 0.01
@@ -27,9 +28,10 @@ def read_env():
     ROBOFLOW_PRETRAINED_PROJECT = os.environ["ROBOFLOW_PRETRAINED_PROJECT"]
     ROBOFLOW_TEST_PROJECT = os.environ["ROBOFLOW_TEST_PROJECT"]
 
-    global DEVICE, YOLO_VERSION, EPOCHS, PACIENCE, FRACTION, DATASET_ROOT
+    global DEVICE, YOLO_VERSION, MODEL_SIZE, EPOCHS, PACIENCE, FRACTION, DATASET_ROOT
     DEVICE = os.environ.get("DEVICE", DEVICE)
     YOLO_VERSION = os.environ.get("YOLO_VERSION", YOLO_VERSION)
+    MODEL_SIZE = os.environ.get("MODEL_SIZE", MODEL_SIZE)
     EPOCHS = int(os.environ.get("EPOCHS", EPOCHS))
     PACIENCE = int(os.environ.get("PACIENCE", PACIENCE))
     FRACTION = float(os.environ.get("FRACTION", FRACTION))
@@ -56,7 +58,7 @@ def download_dataset(api_key, workspace, project_name):
 
 def train_model(dataset, epochs, patience, fraction):
     """学習済み YOLO に追加学習を行い、結果を返す。"""
-    model = YOLO(f"yolo{YOLO_VERSION}n-seg.pt")
+    model = YOLO(f"yolo{YOLO_VERSION}{MODEL_SIZE}-seg.pt")
     model.train(
         data=f"{dataset.location}/data.yaml",
         epochs=epochs,
