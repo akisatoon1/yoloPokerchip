@@ -11,6 +11,7 @@ YOLO_VERSION = "26"  # 8は使えない. yolov8と書くが, yolo11, yolo26と�
 EPOCHS = 1
 PACIENCE = 30
 FRACTION = 0.01
+LOCAL_DATA_ROOT = "dataset"
 
 ROBOFLOW_API_KEY = None
 ROBOFLOW_WORKSPACE = None
@@ -43,12 +44,13 @@ def collect_images(directory, extensions):
     return sorted(set(files))
 
 
-def download_dataset(api_key, workspace, project):
+def download_dataset(api_key, workspace, project_name):
     """Roboflow からデータを YOLOv{YOLO_VERSION} 形式でダウンロードする。"""
     rf = Roboflow(api_key=api_key)
-    project = rf.workspace(workspace).project(project)
+    project = rf.workspace(workspace).project(project_name)
     version = project.version(1)
-    return version.download(f"yolo{YOLO_VERSION}")
+    location = os.path.join(LOCAL_DATA_ROOT, project_name)
+    return version.download(f"yolo{YOLO_VERSION}", location=location)
 
 
 def train_model(dataset, epochs, patience, fraction):
@@ -72,8 +74,11 @@ def train_model(dataset, epochs, patience, fraction):
 BEST_MODEL = None
 
 
-def evaluate(dataset, name, split="test", model=BEST_MODEL):
+def evaluate(dataset, name, split="test", model=None):
     """dataset の test(default) セットを使って学習済みモデルを評価する。"""
+    if model is None:
+        model = BEST_MODEL
+
     results = model.val(
         data=f"{dataset.location}/data.yaml",
         split=split,
@@ -94,6 +99,9 @@ def show_predictions(source, name, model=BEST_MODEL, conf=0.25, iou=0.7):
 
     デフォルトの推論結果の画像がわかりづらいため。
     """
+    if model is None:
+        model = BEST_MODEL
+
     results = model.predict(
         source=source,
         imgsz=640,
