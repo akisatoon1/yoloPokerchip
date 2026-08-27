@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
+from os import path
 
 from count_chips import get_counts_data_from_label, save_csv_from_counts
 
@@ -20,8 +21,8 @@ def exact_rate(counts_data):
     return correct / len(counts_data)
 
 
-def predict(project):
-    model = YOLO("pastData/training2/training-online-dataset/weights/best.pt")
+def predict(project, weights_path, evaluated_dir):
+    model = YOLO(weights_path)
 
     iou_grid = [round(x, 2) for x in np.arange(0.05, 0.96, 0.05)]
     conf_grid = [round(x, 2) for x in np.arange(0.05, 0.96, 0.05)]
@@ -35,7 +36,7 @@ def predict(project):
         model.predict(
             project=project,
             name=name,
-            source="Chips-counter-color-1/valid/images",
+            source=path.join(evaluated_dir, "images"),
             exist_ok=True,
             imgsz=640,
             device="cpu",
@@ -48,7 +49,7 @@ def predict(project):
             result_dir = f"{PREFIX}/{project}/{name}"
             counts_data = get_counts_data_from_label(
                 pred_label_dir=f"{result_dir}/labels",
-                correct_label_dir="Chips-counter-color-1/valid/labels",
+                correct_label_dir=path.join(evaluated_dir, "labels"),
                 conf=conf,
             )
             save_csv_from_counts(
@@ -90,7 +91,9 @@ def save_heatmap(table, out_path):
 
 def main():
     project = "iou-conf-search"
-    table = predict(project)
+    weights_path = "pastData/sizes/training1-for-sizes-underfitting/training-online-dataset-2/weights/best.pt"
+    evaluated_dir = "dataset/chips-counter-color-anws5-1ujue/valid"
+    table = predict(project, weights_path, evaluated_dir)
     save_heatmap(table, out_path=f"{PREFIX}/{project}/heatmap.png")
 
 
