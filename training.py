@@ -9,6 +9,7 @@ DEVICE = "cuda"  # GPU が無い場合は "cpu"
 
 YOLO_VERSION = "26"  # 8は使えない. yolov8と書くが, yolo11, yolo26と書くため
 MODEL_SIZE = "n"  # n, s, m, l, x
+IMAGE_SIZE = 640
 EPOCHS = 1
 PACIENCE = 30
 FRACTION = 0.01
@@ -28,10 +29,11 @@ def read_env():
     ROBOFLOW_PRETRAINED_PROJECT = os.environ["ROBOFLOW_PRETRAINED_PROJECT"]
     ROBOFLOW_TEST_PROJECT = os.environ["ROBOFLOW_TEST_PROJECT"]
 
-    global DEVICE, YOLO_VERSION, MODEL_SIZE, EPOCHS, PACIENCE, FRACTION, DATASET_ROOT
+    global DEVICE, YOLO_VERSION, MODEL_SIZE, IMAGE_SIZE, EPOCHS, PACIENCE, FRACTION, DATASET_ROOT
     DEVICE = os.environ.get("DEVICE", DEVICE)
     YOLO_VERSION = os.environ.get("YOLO_VERSION", YOLO_VERSION)
     MODEL_SIZE = os.environ.get("MODEL_SIZE", MODEL_SIZE)
+    IMAGE_SIZE = int(os.environ.get("IMAGE_SIZE", IMAGE_SIZE))
     EPOCHS = int(os.environ.get("EPOCHS", EPOCHS))
     PACIENCE = int(os.environ.get("PACIENCE", PACIENCE))
     FRACTION = float(os.environ.get("FRACTION", FRACTION))
@@ -64,7 +66,7 @@ def train_model(dataset, epochs, patience, fraction):
         epochs=epochs,
         patience=patience,
         fraction=fraction,
-        imgsz=640,
+        imgsz=IMAGE_SIZE,
         device=DEVICE,
         name="training-online-dataset",
         amp=True,
@@ -85,7 +87,7 @@ def evaluate(dataset, name, split="test", model=None):
     results = model.val(
         data=f"{dataset.location}/data.yaml",
         split=split,
-        imgsz=640,
+        imgsz=IMAGE_SIZE,
         device=DEVICE,
         name=name,
         save_txt=True,
@@ -107,7 +109,7 @@ def show_predictions(source, name, model=BEST_MODEL, conf=0.25, iou=0.7):
 
     results = model.predict(
         source=source,
-        imgsz=640,
+        imgsz=IMAGE_SIZE,
         device=DEVICE,
         name=name,
         save_txt=True,
