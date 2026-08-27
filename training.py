@@ -71,6 +71,7 @@ def train_model(dataset, epochs, patience, fraction):
         name="training-online-dataset",
         amp=True,
         batch=-1,
+        cache=True,
     )
     return model
 
