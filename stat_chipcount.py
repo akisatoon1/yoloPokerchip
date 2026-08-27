@@ -21,7 +21,7 @@ def exact_rate(counts_data):
     return correct / len(counts_data)
 
 
-def predict(project, weights_path, evaluated_dir):
+def predict(project, weights_path, evaluated_dir, imgsz):
     model = YOLO(weights_path)
 
     iou_grid = [round(x, 2) for x in np.arange(0.05, 0.96, 0.05)]
@@ -38,7 +38,7 @@ def predict(project, weights_path, evaluated_dir):
             name=name,
             source=path.join(evaluated_dir, "images"),
             exist_ok=True,
-            imgsz=640,
+            imgsz=imgsz,
             device="cpu",
             save_txt=True,
             save_conf=True,
@@ -91,9 +91,10 @@ def save_heatmap(table, out_path):
 
 def main():
     project = "iou-conf-search"
-    weights_path = "pastData/sizes/training1-for-sizes-underfitting/training-online-dataset-2/weights/best.pt"
+    weights_path = "pastData/sizes/training2-for-imgsz-1280/training-online-dataset-2/weights/best.pt"
     evaluated_dir = "dataset/chips-counter-color-anws5-1ujue/valid"
-    table = predict(project, weights_path, evaluated_dir)
+    imgsz = 1280
+    table = predict(project, weights_path, evaluated_dir, imgsz)
     save_heatmap(table, out_path=f"{PREFIX}/{project}/heatmap.png")
 
 
