@@ -49,12 +49,12 @@ def collect_images(directory, extensions):
     return sorted(set(files))
 
 
-def download_dataset(api_key, workspace, project_name):
+def download_dataset(api_key, workspace, project_name, version_n):
     """Roboflow からデータを YOLOv{YOLO_VERSION} 形式でダウンロードする。"""
     rf = Roboflow(api_key=api_key)
     project = rf.workspace(workspace).project(project_name)
-    version = project.version(1)
-    location = os.path.join(DATASET_ROOT, project_name)
+    version = project.version(version_n)
+    location = os.path.join(DATASET_ROOT, f"{project_name}-v{version_n}")
     return version.download(f"yolo{YOLO_VERSION}", location=location)
 
 
@@ -123,13 +123,13 @@ def show_predictions(source, name, model=BEST_MODEL, conf=0.25, iou=0.7):
 
 def main():
     pretrained_dataset = download_dataset(
-        ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_PRETRAINED_PROJECT
+        ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_PRETRAINED_PROJECT, version_n=1
     )
     model = train_model(
         pretrained_dataset, epochs=EPOCHS, patience=PACIENCE, fraction=FRACTION
     )
     test_dataset = download_dataset(
-        ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_TEST_PROJECT
+        ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_TEST_PROJECT, version_n=2
     )
 
     global BEST_MODEL
