@@ -80,13 +80,12 @@ def train_model(dataset, epochs, patience, fraction):
 BEST_MODEL = None
 
 
-def evaluate(dataset, name, split="test", model=None):
+def evaluate(dataset_dir, name, split="test", model=None):
     """dataset の test(default) セットを使って学習済みモデルを評価する。"""
     if model is None:
         model = BEST_MODEL
-
     results = model.val(
-        data=f"{dataset.location}/data.yaml",
+        data=f"{dataset_dir}/data.yaml",
         split=split,
         imgsz=IMAGE_SIZE,
         device=DEVICE,
@@ -97,7 +96,7 @@ def evaluate(dataset, name, split="test", model=None):
 
     # 現状のデータセットでは, splitがvalのときデータはvalid/に保存されるため
     split_dir = "valid" if split == "val" else split
-    save_counts_from_result(results, dataset, split_dir=split_dir)
+    save_counts_from_result(results, dataset_dir, split_dir=split_dir)
 
 
 def show_predictions(source, name, model=BEST_MODEL, conf=0.25, iou=0.7):
@@ -137,8 +136,8 @@ def main():
 
     if DEVICE == "cuda":
         # cpuのときはなぜかここでKilledされる
-        evaluate(pretrained_dataset, name="val-pretrained", split="val")
-    evaluate(test_dataset, name="val-mytask")
+        evaluate(pretrained_dataset.location, name="val-pretrained", split="val")
+    evaluate(test_dataset.location, name="val-mytask")
     show_predictions(
         os.path.join(pretrained_dataset.location, "valid", "images"),
         name="show-val-predictions",
