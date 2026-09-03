@@ -99,7 +99,7 @@ def evaluate(dataset_dir, name, split="test", model=None):
     save_counts_from_result(results, dataset_dir, split_dir=split_dir)
 
 
-def show_predictions(source, name, model=BEST_MODEL, conf=0.25, iou=0.7):
+def show_predictions(imgs_dir, name, model=BEST_MODEL, conf=0.25, iou=0.7):
     """学習済みモデルの推論を行い、結果を保存する。
 
     デフォルトの推論結果の画像がわかりづらいため。
@@ -108,7 +108,7 @@ def show_predictions(source, name, model=BEST_MODEL, conf=0.25, iou=0.7):
         model = BEST_MODEL
 
     results = model.predict(
-        source=source,
+        source=imgs_dir,
         imgsz=IMAGE_SIZE,
         device=DEVICE,
         name=name,
