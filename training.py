@@ -137,13 +137,13 @@ def main():
     if DEVICE == "cuda":
         # cpuのときはなぜかここでKilledされる
         evaluate(pretrained_dataset.location, name="val-pretrained", split="val")
-    evaluate(test_dataset.location, name="val-mytask")
+    evaluate(test_dataset.location, name="val-mytask", split="val")
     show_predictions(
         os.path.join(pretrained_dataset.location, "valid", "images"),
         name="show-val-predictions",
     )
     show_predictions(
-        os.path.join(test_dataset.location, "test", "images"),
+        os.path.join(test_dataset.location, "valid", "images"),
         name="show-mytask-predictions",
     )
 
