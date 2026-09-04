@@ -6,6 +6,7 @@ from show_pred import save_pred_imgs
 from count_chips import save_counts_from_result
 
 DEVICE = "cuda"  # GPU が無い場合は "cpu"
+CACHE = True  # データセットをキャッシュするかどうか
 
 YOLO_VERSION = "26"  # 8は使えない. yolov8と書くが, yolo11, yolo26と書くため
 MODEL_SIZE = "n"  # n, s, m, l, x
@@ -29,8 +30,9 @@ def read_env():
     ROBOFLOW_PRETRAINED_PROJECT = os.environ["ROBOFLOW_PRETRAINED_PROJECT"]
     ROBOFLOW_TEST_PROJECT = os.environ["ROBOFLOW_TEST_PROJECT"]
 
-    global DEVICE, YOLO_VERSION, MODEL_SIZE, IMAGE_SIZE, EPOCHS, PACIENCE, FRACTION, DATASET_ROOT
+    global DEVICE, CACHE, YOLO_VERSION, MODEL_SIZE, IMAGE_SIZE, EPOCHS, PACIENCE, FRACTION, DATASET_ROOT
     DEVICE = os.environ.get("DEVICE", DEVICE)
+    CACHE = os.environ.get("CACHE", CACHE)
     YOLO_VERSION = os.environ.get("YOLO_VERSION", YOLO_VERSION)
     MODEL_SIZE = os.environ.get("MODEL_SIZE", MODEL_SIZE)
     IMAGE_SIZE = int(os.environ.get("IMAGE_SIZE", IMAGE_SIZE))
@@ -71,7 +73,7 @@ def train_model(dataset, epochs, patience, fraction):
         name="training-online-dataset",
         amp=True,
         batch=-1,
-        cache=True,
+        cache=CACHE,
     )
     return model
 
