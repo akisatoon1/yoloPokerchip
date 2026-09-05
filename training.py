@@ -14,6 +14,7 @@ IMAGE_SIZE = 640
 EPOCHS = 1
 PACIENCE = 30
 FRACTION = 0.01
+BATCH = -1  # -1で自動調整, 1以上で固定
 DATASET_ROOT = "dataset"
 
 ROBOFLOW_API_KEY = None
@@ -30,7 +31,7 @@ def read_env():
     ROBOFLOW_PRETRAINED_PROJECT = os.environ["ROBOFLOW_PRETRAINED_PROJECT"]
     ROBOFLOW_TEST_PROJECT = os.environ["ROBOFLOW_TEST_PROJECT"]
 
-    global DEVICE, CACHE, YOLO_VERSION, MODEL_SIZE, IMAGE_SIZE, EPOCHS, PACIENCE, FRACTION, DATASET_ROOT
+    global DEVICE, CACHE, YOLO_VERSION, MODEL_SIZE, IMAGE_SIZE, EPOCHS, PACIENCE, FRACTION, BATCH, DATASET_ROOT
     DEVICE = os.environ.get("DEVICE", DEVICE)
     CACHE = os.environ.get("CACHE", CACHE)
     YOLO_VERSION = os.environ.get("YOLO_VERSION", YOLO_VERSION)
@@ -39,6 +40,7 @@ def read_env():
     EPOCHS = int(os.environ.get("EPOCHS", EPOCHS))
     PACIENCE = int(os.environ.get("PACIENCE", PACIENCE))
     FRACTION = float(os.environ.get("FRACTION", FRACTION))
+    BATCH = int(os.environ.get("BATCH", BATCH))
     DATASET_ROOT = os.environ.get("DATASET_ROOT", DATASET_ROOT)
 
 
@@ -72,7 +74,7 @@ def train_model(dataset, epochs, patience, fraction):
         device=DEVICE,
         name="training-online-dataset",
         amp=True,
-        batch=-1,
+        batch=BATCH,
         cache=CACHE,
     )
     return model
