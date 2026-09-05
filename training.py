@@ -133,7 +133,7 @@ def main():
         pretrained_dataset, epochs=EPOCHS, patience=PACIENCE, fraction=FRACTION
     )
     test_dataset = download_dataset(
-        ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_TEST_PROJECT, version_n=3
+        ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_TEST_PROJECT, version_n=4
     )
 
     global BEST_MODEL
