@@ -76,6 +76,7 @@ def train_model(dataset, epochs, patience, fraction):
         amp=True,
         batch=BATCH,
         cache=CACHE,
+        mosaic=0.0,
     )
     return model
 
