@@ -29,6 +29,8 @@ def finetune(name, weights_path, yaml_path, freeze):
         batch=-1,
         cache=CACHE,
         freeze=freeze,
+        optimizer="AdamW",
+        lr0=0.001,
     )
     return model
 
@@ -60,7 +62,7 @@ def fintune_and_evaluate(freeze):
 
 
 def main():
-    freezes = [0, 5, 10, 15, 20, 23]
+    freezes = [23]
     for freeze in freezes:
         fintune_and_evaluate(freeze)
 
