@@ -1,17 +1,7 @@
 from ultralytics import YOLO
 from os import path
 
-from training import (
-    CACHE,
-    EPOCHS,
-    PACIENCE,
-    FRACTION,
-    DEVICE,
-    IMAGE_SIZE,
-    ROBOFLOW_API_KEY,
-    ROBOFLOW_WORKSPACE,
-    ROBOFLOW_TEST_PROJECT,
-)
+import env
 from training import download_dataset, evaluate, show_predictions
 
 
@@ -19,15 +9,15 @@ def finetune(name, weights_path, yaml_path, freeze):
     model = YOLO(weights_path)
     model.train(
         data=yaml_path,
-        epochs=EPOCHS,
-        patience=PACIENCE,
-        fraction=FRACTION,
-        imgsz=IMAGE_SIZE,
-        device=DEVICE,
+        epochs=env.EPOCHS,
+        patience=env.PACIENCE,
+        fraction=env.FRACTION,
+        imgsz=env.IMAGE_SIZE,
+        device=env.DEVICE,
         name=name,
         amp=True,
         batch=-1,
-        cache=CACHE,
+        cache=env.CACHE,
         freeze=freeze,
         optimizer="AdamW",
         lr0=0.001,
@@ -37,7 +27,10 @@ def finetune(name, weights_path, yaml_path, freeze):
 
 def fintune_and_evaluate(freeze):
     test_dataset = download_dataset(
-        ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_TEST_PROJECT, version_n=4
+        env.ROBOFLOW_API_KEY,
+        env.ROBOFLOW_WORKSPACE,
+        env.ROBOFLOW_TEST_PROJECT,
+        version_n=4,
     )
 
     w_path = "pastData/sizes/training2-for-imgsz-1280/training-online-dataset-2/weights/best.pt"
