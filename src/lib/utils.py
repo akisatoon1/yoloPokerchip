@@ -31,7 +31,6 @@ def train_model(name, dataset_dir):
         batch=env.BATCH,
         cache=env.CACHE,
         amp=True,
-        mosaic=0.0,
     )
     return model
 
