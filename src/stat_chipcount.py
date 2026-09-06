@@ -6,7 +6,7 @@ import pandas as pd
 import seaborn as sns
 from ultralytics import YOLO
 
-from count_chips import get_counts_data_from_label, save_csv_from_counts
+from lib.count_chips import get_counts_data_from_label, save_csv_from_counts
 
 PREFIX = "runs/segment"
 

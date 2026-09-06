@@ -2,8 +2,7 @@ import os
 
 from ultralytics import YOLO
 
-import env
-import utils
+from lib import env, utils
 
 
 def main():

@@ -2,8 +2,7 @@ from os import path
 
 from ultralytics import YOLO
 
-import env
-import utils
+from lib import env, utils
 
 
 def finetune(name, weights_path, yaml_path, freeze):

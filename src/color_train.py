@@ -2,13 +2,13 @@ from os.path import join
 
 from ultralytics import YOLO
 
-import env
-import utils
+from lib import utils
+from lib.env import ROBOFLOW_COLOR_PROJECT
 
 
 def main():
     dataset = utils.download_dataset(
-        project_name=env.ROBOFLOW_COLOR_PROJECT,
+        project_name=ROBOFLOW_COLOR_PROJECT,
         version_n=3,
     )
     model = utils.train_model(
