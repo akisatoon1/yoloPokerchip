@@ -41,31 +41,30 @@ def main():
         version_n=5,
     )
 
-    global BEST_MODEL
-    BEST_MODEL = YOLO(model.trainer.best)
+    model_best = YOLO(model.trainer.best)
 
     if env.DEVICE == "cuda":
         # cpuのときはなぜかここでKilledされる
         utils.evaluate(
             name="val-pretrained",
-            model=BEST_MODEL,
+            model=model_best,
             dataset_dir=pretrained_dataset.location,
             split="val",
         )
     utils.evaluate(
         name="val-mytask",
-        model=BEST_MODEL,
+        model=model_best,
         dataset_dir=test_dataset.location,
         split="val",
     )
     utils.show_predictions(
         name="show-val-predictions",
-        model=BEST_MODEL,
+        model=model_best,
         imgs_dir=os.path.join(pretrained_dataset.location, "valid", "images"),
     )
     utils.show_predictions(
         name="show-mytask-predictions",
-        model=BEST_MODEL,
+        model=model_best,
         imgs_dir=os.path.join(test_dataset.location, "valid", "images"),
     )
 
