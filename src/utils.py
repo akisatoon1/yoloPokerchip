@@ -17,20 +17,20 @@ def download_dataset(project_name, version_n):
     return version.download(f"yolo{env.YOLO_VERSION}", location=location)
 
 
-def train_model(name, dataset):
+def train_model(name, dataset_dir):
     """学習済み YOLO に追加学習を行い、結果を返す。"""
     model = YOLO(f"yolo{env.YOLO_VERSION}{env.MODEL_SIZE}-seg.pt")
     model.train(
         name=name,
-        data=f"{dataset.location}/data.yaml",
+        data=join(dataset_dir, "data.yaml"),
         epochs=env.EPOCHS,
         patience=env.PATIENCE,
         fraction=env.FRACTION,
         imgsz=env.IMAGE_SIZE,
         device=env.DEVICE,
-        amp=True,
         batch=env.BATCH,
         cache=env.CACHE,
+        amp=True,
         mosaic=0.0,
     )
     return model
@@ -39,11 +39,11 @@ def train_model(name, dataset):
 def evaluate(name, model, dataset_dir, split="test"):
     """dataset の test(default) セットを使って学習済みモデルを評価する。"""
     results = model.val(
-        data=f"{dataset_dir}/data.yaml",
+        name=name,
+        data=join(dataset_dir, "data.yaml"),
         split=split,
         imgsz=env.IMAGE_SIZE,
         device=env.DEVICE,
-        name=name,
         save_txt=True,
         save_conf=True,
     )

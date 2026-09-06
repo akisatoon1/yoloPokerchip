@@ -11,7 +11,7 @@ def main():
         env.ROBOFLOW_COLOR_PROJECT,
         version_n=3,
     )
-    model = utils.train_model(name="color-trained", dataset=dataset)
+    model = utils.train_model(name="color-trained", dataset_dir=dataset.location)
 
     best_model = YOLO(model.trainer.best)
 

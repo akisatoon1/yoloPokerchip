@@ -11,7 +11,7 @@ def main():
         env.ROBOFLOW_PRETRAINED_PROJECT,
         version_n=1,
     )
-    model = utils.train_model("pretrained", pretrained_dataset)
+    model = utils.train_model("pretrained", pretrained_dataset.location)
     test_dataset = utils.download_dataset(
         env.ROBOFLOW_TEST_PROJECT,
         version_n=5,
