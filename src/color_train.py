@@ -5,7 +5,6 @@ from ultralytics import YOLO
 import env
 import utils
 from training import (
-    evaluate,
     show_predictions,
     train_model,
 )
@@ -22,7 +21,9 @@ def main():
 
     best_model = YOLO(model.trainer.best)
 
-    evaluate(dataset.location, name="val-color", split="val", model=best_model)
+    utils.evaluate(
+        name="val-color", model=best_model, dataset_dir=dataset.location, split="val"
+    )
     show_predictions(
         join(dataset.location, "valid", "images"),
         name="show-color-preds",

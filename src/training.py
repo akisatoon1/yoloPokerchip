@@ -4,7 +4,6 @@ from ultralytics import YOLO
 
 import env
 import utils
-from count_chips import save_counts_from_result
 from show_pred import save_pred_imgs
 
 
@@ -29,25 +28,6 @@ def train_model(dataset, epochs, patience, fraction):
 
 # 毎回bestを読み込むのは無駄なため
 BEST_MODEL = None
-
-
-def evaluate(dataset_dir, name, split="test", model=None):
-    """dataset の test(default) セットを使って学習済みモデルを評価する。"""
-    if model is None:
-        model = BEST_MODEL
-    results = model.val(
-        data=f"{dataset_dir}/data.yaml",
-        split=split,
-        imgsz=env.IMAGE_SIZE,
-        device=env.DEVICE,
-        name=name,
-        save_txt=True,
-        save_conf=True,
-    )
-
-    # 現状のデータセットでは, splitがvalのときデータはvalid/に保存されるため
-    split_dir = "valid" if split == "val" else split
-    save_counts_from_result(results, dataset_dir, split_dir=split_dir)
 
 
 def show_predictions(imgs_dir, name, model=BEST_MODEL, conf=0.25, iou=0.7):
@@ -92,8 +72,18 @@ def main():
 
     if env.DEVICE == "cuda":
         # cpuのときはなぜかここでKilledされる
-        evaluate(pretrained_dataset.location, name="val-pretrained", split="val")
-    evaluate(test_dataset.location, name="val-mytask", split="val")
+        utils.evaluate(
+            name="val-pretrained",
+            model=BEST_MODEL,
+            dataset_dir=pretrained_dataset.location,
+            split="val",
+        )
+    utils.evaluate(
+        name="val-mytask",
+        model=BEST_MODEL,
+        dataset_dir=test_dataset.location,
+        split="val",
+    )
     show_predictions(
         os.path.join(pretrained_dataset.location, "valid", "images"),
         name="show-val-predictions",

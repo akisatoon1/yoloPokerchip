@@ -4,7 +4,7 @@ from ultralytics import YOLO
 
 import env
 import utils
-from training import evaluate, show_predictions
+from training import show_predictions
 
 
 def finetune(name, weights_path, yaml_path, freeze):
@@ -41,11 +41,11 @@ def fintune_and_evaluate(freeze):
         freeze,
     )
 
-    evaluate(
-        test_dataset.location,
+    utils.evaluate(
         f"val-finetuned-freeze-{freeze}",
-        split="val",
         model=model,
+        dataset_dir=test_dataset.location,
+        split="val",
     )
     show_predictions(
         path.join(test_dataset.location, "valid", "images"),
