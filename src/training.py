@@ -1,20 +1,10 @@
 from ultralytics import YOLO
 from roboflow import Roboflow
 import os
-import glob
 
 from show_pred import save_pred_imgs
 from count_chips import save_counts_from_result
 import env
-
-
-def collect_images(directory, extensions):
-    """指定フォルダから対象拡張子の画像パスを集める（大文字小文字どちらも）。"""
-    files = []
-    for ext in extensions:
-        files += glob.glob(os.path.join(directory, f"*.{ext}"))
-        files += glob.glob(os.path.join(directory, f"*.{ext.upper()}"))
-    return sorted(set(files))
 
 
 def download_dataset(api_key, workspace, project_name, version_n):
