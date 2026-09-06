@@ -14,7 +14,7 @@ def download_dataset(project_name, version_n):
     project = rf.workspace(env.ROBOFLOW_WORKSPACE).project(project_name)
     version = project.version(version_n)
     location = join(env.DATASET_ROOT, f"{project_name}-v{version_n}")
-    return version.download(f"yolo{env.YOLO_VERSION}", location=location)
+    return version.download("yolo26", location=location)
 
 
 def train_model(name, dataset_dir):
