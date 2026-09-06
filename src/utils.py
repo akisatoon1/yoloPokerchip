@@ -4,8 +4,8 @@ from roboflow import Roboflow
 from ultralytics import YOLO
 
 import env
+from count_chips import save_counts_from_result
 from show_pred import save_pred_imgs
-from src.count_chips import save_counts_from_result
 
 
 def download_dataset(project_name, version_n):
