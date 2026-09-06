@@ -1,25 +1,25 @@
+from ultralytics import YOLO
+from os.path import join
+
 from training import (
     download_dataset,
     train_model,
     evaluate,
     show_predictions,
-    read_env,
-    ROBOFLOW_API_KEY,
-    ROBOFLOW_WORKSPACE,
-    ROBOFLOW_COLOR_PROJECT,
-    EPOCHS,
-    PACIENCE,
-    FRACTION,
 )
-from ultralytics import YOLO
-from os.path import join
+import env
 
 
 def main():
     dataset = download_dataset(
-        ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, ROBOFLOW_COLOR_PROJECT, version_n=3
+        env.ROBOFLOW_API_KEY,
+        env.ROBOFLOW_WORKSPACE,
+        env.ROBOFLOW_COLOR_PROJECT,
+        version_n=3,
     )
-    model = train_model(dataset, epochs=EPOCHS, patience=PACIENCE, fraction=FRACTION)
+    model = train_model(
+        dataset, epochs=env.EPOCHS, patience=env.PATIENCE, fraction=env.FRACTION
+    )
 
     best_model = YOLO(model.trainer.best)
 
