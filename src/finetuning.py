@@ -2,7 +2,8 @@ from ultralytics import YOLO
 from os import path
 
 import env
-from training import download_dataset, evaluate, show_predictions
+from training import evaluate, show_predictions
+import utils
 
 
 def finetune(name, weights_path, yaml_path, freeze):
@@ -26,9 +27,7 @@ def finetune(name, weights_path, yaml_path, freeze):
 
 
 def fintune_and_evaluate(freeze):
-    test_dataset = download_dataset(
-        env.ROBOFLOW_API_KEY,
-        env.ROBOFLOW_WORKSPACE,
+    test_dataset = utils.download_dataset(
         env.ROBOFLOW_TEST_PROJECT,
         version_n=4,
     )

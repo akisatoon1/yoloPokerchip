@@ -2,18 +2,16 @@ from ultralytics import YOLO
 from os.path import join
 
 from training import (
-    download_dataset,
     train_model,
     evaluate,
     show_predictions,
 )
+import utils
 import env
 
 
 def main():
-    dataset = download_dataset(
-        env.ROBOFLOW_API_KEY,
-        env.ROBOFLOW_WORKSPACE,
+    dataset = utils.download_dataset(
         env.ROBOFLOW_COLOR_PROJECT,
         version_n=3,
     )

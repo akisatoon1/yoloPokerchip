@@ -4,16 +4,8 @@ import os
 
 from show_pred import save_pred_imgs
 from count_chips import save_counts_from_result
+import utils
 import env
-
-
-def download_dataset(api_key, workspace, project_name, version_n):
-    """Roboflow からデータを YOLOv{YOLO_VERSION} 形式でダウンロードする。"""
-    rf = Roboflow(api_key=api_key)
-    project = rf.workspace(workspace).project(project_name)
-    version = project.version(version_n)
-    location = os.path.join(env.DATASET_ROOT, f"{project_name}-v{version_n}")
-    return version.download(f"yolo{env.YOLO_VERSION}", location=location)
 
 
 def train_model(dataset, epochs, patience, fraction):
@@ -80,9 +72,7 @@ def show_predictions(imgs_dir, name, model=BEST_MODEL, conf=0.25, iou=0.7):
 
 
 def main():
-    pretrained_dataset = download_dataset(
-        env.ROBOFLOW_API_KEY,
-        env.ROBOFLOW_WORKSPACE,
+    pretrained_dataset = utils.download_dataset(
         env.ROBOFLOW_PRETRAINED_PROJECT,
         version_n=1,
     )
@@ -92,9 +82,7 @@ def main():
         patience=env.PACIENCE,
         fraction=env.FRACTION,
     )
-    test_dataset = download_dataset(
-        env.ROBOFLOW_API_KEY,
-        env.ROBOFLOW_WORKSPACE,
+    test_dataset = utils.download_dataset(
         env.ROBOFLOW_TEST_PROJECT,
         version_n=5,
     )
