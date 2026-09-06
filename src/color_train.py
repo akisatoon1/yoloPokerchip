@@ -4,9 +4,6 @@ from ultralytics import YOLO
 
 import env
 import utils
-from training import (
-    train_model,
-)
 
 
 def main():
@@ -14,9 +11,7 @@ def main():
         env.ROBOFLOW_COLOR_PROJECT,
         version_n=3,
     )
-    model = train_model(
-        dataset, epochs=env.EPOCHS, patience=env.PATIENCE, fraction=env.FRACTION
-    )
+    model = utils.train_model(name="color-trained", dataset=dataset)
 
     best_model = YOLO(model.trainer.best)
 

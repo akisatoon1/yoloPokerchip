@@ -6,36 +6,12 @@ import env
 import utils
 
 
-def train_model(dataset, epochs, patience, fraction):
-    """学習済み YOLO に追加学習を行い、結果を返す。"""
-    model = YOLO(f"yolo{env.YOLO_VERSION}{env.MODEL_SIZE}-seg.pt")
-    model.train(
-        data=f"{dataset.location}/data.yaml",
-        epochs=epochs,
-        patience=patience,
-        fraction=fraction,
-        imgsz=env.IMAGE_SIZE,
-        device=env.DEVICE,
-        name="training-online-dataset",
-        amp=True,
-        batch=env.BATCH,
-        cache=env.CACHE,
-        mosaic=0.0,
-    )
-    return model
-
-
 def main():
     pretrained_dataset = utils.download_dataset(
         env.ROBOFLOW_PRETRAINED_PROJECT,
         version_n=1,
     )
-    model = train_model(
-        pretrained_dataset,
-        epochs=env.EPOCHS,
-        patience=env.PACIENCE,
-        fraction=env.FRACTION,
-    )
+    model = utils.train_model("pretrained", pretrained_dataset)
     test_dataset = utils.download_dataset(
         env.ROBOFLOW_TEST_PROJECT,
         version_n=5,

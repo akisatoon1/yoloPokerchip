@@ -1,6 +1,7 @@
 from os.path import join
 
 from roboflow import Roboflow
+from ultralytics import YOLO
 
 import env
 from show_pred import save_pred_imgs
@@ -14,6 +15,25 @@ def download_dataset(project_name, version_n):
     version = project.version(version_n)
     location = join(env.DATASET_ROOT, f"{project_name}-v{version_n}")
     return version.download(f"yolo{env.YOLO_VERSION}", location=location)
+
+
+def train_model(name, dataset):
+    """学習済み YOLO に追加学習を行い、結果を返す。"""
+    model = YOLO(f"yolo{env.YOLO_VERSION}{env.MODEL_SIZE}-seg.pt")
+    model.train(
+        name=name,
+        data=f"{dataset.location}/data.yaml",
+        epochs=env.EPOCHS,
+        patience=env.PATIENCE,
+        fraction=env.FRACTION,
+        imgsz=env.IMAGE_SIZE,
+        device=env.DEVICE,
+        amp=True,
+        batch=env.BATCH,
+        cache=env.CACHE,
+        mosaic=0.0,
+    )
+    return model
 
 
 def evaluate(name, model, dataset_dir, split="test"):
