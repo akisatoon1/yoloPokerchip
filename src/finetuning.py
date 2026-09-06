@@ -1,9 +1,10 @@
-from ultralytics import YOLO
 from os import path
 
+from ultralytics import YOLO
+
 import env
-from training import evaluate, show_predictions
 import utils
+from training import evaluate, show_predictions
 
 
 def finetune(name, weights_path, yaml_path, freeze):

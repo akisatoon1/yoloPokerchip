@@ -1,6 +1,7 @@
-import cv2
-from os import path, makedirs
 import logging
+from os import makedirs, path
+
+import cv2
 
 logging.basicConfig(
     filename="save_errors.log",
@@ -28,4 +29,4 @@ def save_pred_img(result, save_path):
     im_bgr = result.plot(color_mode="instance", boxes=False, labels=False)
     ok = cv2.imwrite(save_path, im_bgr)
     if not ok:
-        raise IOError(f"保存に失敗しました: {save_path}")
+        raise OSError(f"保存に失敗しました: {save_path}")

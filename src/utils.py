@@ -1,7 +1,8 @@
-from roboflow import Roboflow
 from os.path import join
 
-from env import ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, YOLO_VERSION, DATASET_ROOT
+from roboflow import Roboflow
+
+from env import DATASET_ROOT, ROBOFLOW_API_KEY, ROBOFLOW_WORKSPACE, YOLO_VERSION
 
 
 def download_dataset(project_name, version_n):

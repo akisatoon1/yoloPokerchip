@@ -1,13 +1,14 @@
-from ultralytics import YOLO
 from os.path import join
 
+from ultralytics import YOLO
+
+import env
+import utils
 from training import (
-    train_model,
     evaluate,
     show_predictions,
+    train_model,
 )
-import utils
-import env
 
 
 def main():

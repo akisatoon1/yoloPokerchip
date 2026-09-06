@@ -1,9 +1,10 @@
-from ultralytics import YOLO
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
 from os import path
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from ultralytics import YOLO
 
 from count_chips import get_counts_data_from_label, save_csv_from_counts
 
