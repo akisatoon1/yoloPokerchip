@@ -1,11 +1,10 @@
 from os.path import join
 
 import env
+from count_chips import save_counts_from_result
 from roboflow import Roboflow
 from show_pred import save_pred_imgs
 from ultralytics import YOLO
-
-from lib.count_chips import save_counts_from_result
 
 
 def download_dataset(project_name, version_n):
