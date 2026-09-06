@@ -10,7 +10,7 @@ CACHE = None  # データセットをキャッシュするかどうか
 YOLO_MODEL = None  # yolo26n-seg.pt など
 IMAGE_SIZE = None
 EPOCHS = None
-PACIENCE = None
+PATIENCE = None
 FRACTION = None
 BATCH = None  # -1で自動調整, 1以上で固定
 DATASET_ROOT = None
@@ -35,13 +35,13 @@ def read_env():
         ROBOFLOW_COLOR_PROJECT = os.environ["ROBOFLOW_COLOR_PROJECT"]
         ROBOFLOW_BOX_PROJECT = os.environ["ROBOFLOW_BOX_PROJECT"]
 
-        global DEVICE, CACHE, YOLO_MODEL, IMAGE_SIZE, EPOCHS, PACIENCE, FRACTION, BATCH, DATASET_ROOT
+        global DEVICE, CACHE, YOLO_MODEL, IMAGE_SIZE, EPOCHS, PATIENCE, FRACTION, BATCH, DATASET_ROOT
         DEVICE = os.environ["DEVICE"]
         CACHE = os.environ["CACHE"]
         YOLO_MODEL = os.environ["YOLO_MODEL"]
         IMAGE_SIZE = int(os.environ["IMAGE_SIZE"])
         EPOCHS = int(os.environ["EPOCHS"])
-        PACIENCE = int(os.environ["PACIENCE"])
+        PATIENCE = int(os.environ["PATIENCE"])
         FRACTION = float(os.environ["FRACTION"])
         BATCH = int(os.environ["BATCH"])
         DATASET_ROOT = os.environ["DATASET_ROOT"]

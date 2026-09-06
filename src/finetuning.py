@@ -10,7 +10,7 @@ def finetune(name, weights_path, yaml_path, freeze):
     model.train(
         data=yaml_path,
         epochs=env.EPOCHS,
-        patience=env.PACIENCE,
+        patience=env.PATIENCE,
         fraction=env.FRACTION,
         imgsz=env.IMAGE_SIZE,
         device=env.DEVICE,
