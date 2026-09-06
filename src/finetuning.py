@@ -41,7 +41,7 @@ def fintune_and_evaluate(freeze):
     )
 
     utils.evaluate(
-        f"val-finetuned-freeze-{freeze}",
+        name=f"val-finetuned-freeze-{freeze}",
         model=model,
         dataset_dir=test_dataset.location,
         split="val",

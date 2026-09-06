@@ -8,15 +8,18 @@ import utils
 
 def main():
     pretrained_dataset = utils.download_dataset(
-        env.ROBOFLOW_PRETRAINED_PROJECT,
+        project_name=env.ROBOFLOW_PRETRAINED_PROJECT,
         version_n=1,
     )
-    model = utils.train_model("pretrained", pretrained_dataset.location)
     test_dataset = utils.download_dataset(
-        env.ROBOFLOW_TEST_PROJECT,
+        project_name=env.ROBOFLOW_TEST_PROJECT,
         version_n=5,
     )
 
+    model = utils.train_model(
+        name="pretrained",
+        dataset_dir=pretrained_dataset.location,
+    )
     model_best = YOLO(model.trainer.best)
 
     if env.DEVICE == "cuda":
