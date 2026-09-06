@@ -20,7 +20,7 @@ def save_pred_imgs(results):
         makedirs(path.dirname(saved_path), exist_ok=True)
         try:
             save_pred_img(result, saved_path)
-        except Exception as e:
+        except OSError as e:
             logger.error(f"Failed to save result: {e}")
 
 
