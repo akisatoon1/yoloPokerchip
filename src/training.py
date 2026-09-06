@@ -4,7 +4,6 @@ from ultralytics import YOLO
 
 import env
 import utils
-from show_pred import save_pred_imgs
 
 
 def train_model(dataset, epochs, patience, fraction):
@@ -24,31 +23,6 @@ def train_model(dataset, epochs, patience, fraction):
         mosaic=0.0,
     )
     return model
-
-
-# 毎回bestを読み込むのは無駄なため
-BEST_MODEL = None
-
-
-def show_predictions(imgs_dir, name, model=BEST_MODEL, conf=0.25, iou=0.7):
-    """学習済みモデルの推論を行い、結果を保存する。
-
-    デフォルトの推論結果の画像がわかりづらいため。
-    """
-    if model is None:
-        model = BEST_MODEL
-
-    results = model.predict(
-        source=imgs_dir,
-        imgsz=env.IMAGE_SIZE,
-        device=env.DEVICE,
-        name=name,
-        save_txt=True,
-        save_conf=True,
-        conf=conf,
-        iou=iou,
-    )
-    save_pred_imgs(results)
 
 
 def main():
@@ -84,13 +58,15 @@ def main():
         dataset_dir=test_dataset.location,
         split="val",
     )
-    show_predictions(
-        os.path.join(pretrained_dataset.location, "valid", "images"),
+    utils.show_predictions(
         name="show-val-predictions",
+        model=BEST_MODEL,
+        imgs_dir=os.path.join(pretrained_dataset.location, "valid", "images"),
     )
-    show_predictions(
-        os.path.join(test_dataset.location, "valid", "images"),
+    utils.show_predictions(
         name="show-mytask-predictions",
+        model=BEST_MODEL,
+        imgs_dir=os.path.join(test_dataset.location, "valid", "images"),
     )
 
 
