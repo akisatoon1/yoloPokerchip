@@ -7,8 +7,7 @@ import os
 DEVICE = None  # GPU が無い場合は "cpu"
 CACHE = None  # データセットをキャッシュするかどうか
 
-YOLO_VERSION = None  # 8は使えない. yolov8と書くが, yolo11, yolo26と書くため
-MODEL_SIZE = None  # n, s, m, l, x
+YOLO_MODEL = None  # yolo26n-seg.pt など
 IMAGE_SIZE = None
 EPOCHS = None
 PACIENCE = None
@@ -34,11 +33,10 @@ def read_env():
         ROBOFLOW_TEST_PROJECT = os.environ["ROBOFLOW_TEST_PROJECT"]
         ROBOFLOW_COLOR_PROJECT = os.environ["ROBOFLOW_COLOR_PROJECT"]
 
-        global DEVICE, CACHE, YOLO_VERSION, MODEL_SIZE, IMAGE_SIZE, EPOCHS, PACIENCE, FRACTION, BATCH, DATASET_ROOT
+        global DEVICE, CACHE, YOLO_MODEL, IMAGE_SIZE, EPOCHS, PACIENCE, FRACTION, BATCH, DATASET_ROOT
         DEVICE = os.environ["DEVICE"]
         CACHE = os.environ["CACHE"]
-        YOLO_VERSION = os.environ["YOLO_VERSION"]
-        MODEL_SIZE = os.environ["MODEL_SIZE"]
+        YOLO_MODEL = os.environ["YOLO_MODEL"]
         IMAGE_SIZE = int(os.environ["IMAGE_SIZE"])
         EPOCHS = int(os.environ["EPOCHS"])
         PACIENCE = int(os.environ["PACIENCE"])

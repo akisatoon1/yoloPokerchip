@@ -19,7 +19,7 @@ def download_dataset(project_name, version_n):
 
 def train_model(name, dataset_dir):
     """学習済み YOLO に追加学習を行い、結果を返す。"""
-    model = YOLO(f"yolo{env.YOLO_VERSION}{env.MODEL_SIZE}-seg.pt")
+    model = YOLO(env.YOLO_MODEL)
     model.train(
         name=name,
         data=join(dataset_dir, "data.yaml"),
